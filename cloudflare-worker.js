@@ -72,7 +72,7 @@ async function handleSAM(request, url, env) {
   // Inject the API key server-side — never exposed to the browser
   samParams.set('api_key', env.SAM_API_KEY || '');
 
-  const samUrl = `https://api.sam.gov/opportunities/v2/search?${samParams.toString()}`;
+  const samUrl = `https://api.sam.gov/entity-information/v4/entities?${samParams.toString()}`;
 
   const resp = await fetch(samUrl, {
     method: 'GET',
