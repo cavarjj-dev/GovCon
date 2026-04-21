@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GovCon Command Center | Unified Solutions Inc.</title>
+<meta name="description" content="Federal contracting dashboard — Unified Solutions Inc. SDVOSB | CAGE 8CX74">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A5A;--olive:#7A9C28;--lime:#A8C846;--teal:#4CAF9A;--charcoal:#3D3D3D;--offwhite:#F5F3EE;--deepnavy:#12273D;--white:#fff;--red:#EF4444;--amber:#F59E0B;--blue:#3B82F6;--purple:#8B5CF6}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:'DM Sans','Helvetica Neue',sans-serif;background:var(--deepnavy);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:'DM Sans',sans-serif}
+input,select,textarea{font-family:'DM Sans',sans-serif}
+
+/* LAYOUT */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.header{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:100;padding:0 1.5rem}
+.header-inner{max-width:1380px;margin:0 auto;display:flex;align-items:center;gap:1rem;height:60px}
+.logo-mark{width:36px;height:36px;border-radius:50%;background:var(--olive);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:22px;height:22px}
+.brand-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--white);line-height:1.1}
+.brand-sub{font-size:.58rem;color:rgba(255,255,255,.4);font-family:'Space Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.header-badges{display:flex;gap:.4rem;flex-wrap:wrap;margin-left:auto}
+.header-actions{display:flex;gap:.4rem;flex-shrink:0}
+
+/* NAV */
+.nav{background:var(--deepnavy);border-bottom:1px solid rgba(255,255,255,.07);padding:0 1.5rem;display:flex;align-items:center}
+.nav-inner{max-width:1380px;margin:0 auto;display:flex;align-items:center;width:100%;gap:0}
+.nav-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:400;padding:.7rem .9rem;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.01em;white-space:nowrap}
+.nav-btn.active{color:var(--lime);border-bottom-color:var(--lime);font-weight:600}
+.nav-btn:hover:not(.active){color:rgba(255,255,255,.8)}
+.nav-spacer{flex:1}
+
+/* STATS BAR */
+.stats-bar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,.06);padding:.6rem 1.5rem;overflow-x:auto}
+.stats-inner{max-width:1380px;margin:0 auto;display:flex;gap:.6rem}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:.65rem 1rem;text-align:center;min-width:100px;flex-shrink:0}
+.stat-val{font-family:'Space Mono',monospace;font-size:1.2rem;font-weight:700;display:block;line-height:1}
+.stat-label{font-size:.6rem;color:rgba(255,255,255,.4);margin-top:3px;letter-spacing:.06em;text-transform:uppercase;font-family:'Space Mono',monospace;white-space:nowrap}
+
+/* MAIN */
+.main{max-width:1380px;margin:0 auto;padding:1.25rem 1.5rem;flex:1;width:100%}
+.page{display:none}.page.active{display:block}
+
+/* CARDS & PANELS */
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
+.card-head{padding:.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between}
+.sec-label{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--olive);font-family:'Space Mono',monospace}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'Space Mono',monospace}
+.muted{color:rgba(255,255,255,.45)}
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:.65rem;font-family:'Space Mono',monospace;background:rgba(255,255,255,.07);border-radius:4px;padding:2px 7px;color:rgba(255,255,255,.6)}
+
+/* BADGES */
+.badge{display:inline-block;font-size:.62rem;font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap}
+.badge-lime{background:rgba(168,200,70,.15);color:var(--lime);border:1px solid rgba(168,200,70,.3)}
+.badge-teal{background:rgba(76,175,154,.15);color:var(--teal);border:1px solid rgba(76,175,154,.3)}
+.badge-blue{background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.badge-purple{background:rgba(139,92,246,.15);color:var(--purple);border:1px solid rgba(139,92,246,.3)}
+.badge-gray{background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12)}
+.badge-olive{background:rgba(122,156,40,.2);color:var(--olive);border:1px solid rgba(122,156,40,.3)}
+
+/* BUTTONS */
+.btn{display:inline-block;border-radius:5px;padding:.55rem 1rem;font-size:.8rem;font-weight:600;border:none;transition:opacity .15s,transform .1s;white-space:nowrap}
+.btn:hover{opacity:.88}
+.btn:active{transform:scale(.97)}
+.btn-olive{background:var(--olive);color:var(--white)}
+.btn-teal{background:rgba(76,175,154,.18);color:var(--teal);border:1px solid rgba(76,175,154,.3)}
+.btn-red{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.btn-ghost{background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.12)}
+.btn-sm{padding:.35rem .7rem;font-size:.72rem}
+.btn-full{width:100%;text-align:center}
+
+/* SCORE RING */
+.score-wrap{flex-shrink:0}
+
+/* FORM ELEMENTS */
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:.7rem;color:rgba(255,255,255,.5);font-family:'Space Mono',monospace;letter-spacing:.05em}
+.form-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.6rem .85rem;color:var(--white);font-size:.85rem;outline:none;width:100%;transition:border-color .15s}
+.form-input:focus{border-color:var(--olive)}
+.form-select{background:var(--deepnavy);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.55rem .85rem;color:var(--white);font-size:.82rem;outline:none;width:100%}
+.form-textarea{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:.75rem 1rem;color:var(--white);font-size:.82rem;outline:none;width:100%;resize:vertical;line-height:1.7;min-height:260px}
+
+/* OPP CARD */
+.opp-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:1rem 1.1rem;display:flex;align-items:flex-start;gap:.9rem;transition:border-color .2s}
+.opp-card.score-high{border-color:rgba(168,200,70,.2)}
+.opp-card.score-mid{border-color:rgba(245,158,11,.15)}
+.opp-card-body{flex:1;min-width:0}
+.opp-name{font-family:'Playfair Display',serif;font-size:.98rem;color:var(--white);line-height:1.3;margin-bottom:6px}
+.opp-meta{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:6px}
+.opp-note{font-size:.74rem;color:rgba(255,255,255,.45);line-height:1.6}
+.opp-actions{display:flex;flex-direction:column;gap:.35rem;flex-shrink:0}
+
+/* PIPELINE KANBAN */
+.kanban{display:flex;gap:.7rem;overflow-x:auto;padding-bottom:.5rem}
+.kanban-col{min-width:210px;flex:0 0 210px;display:flex;flex-direction:column;gap:.45rem}
+.kanban-col-head{display:flex;align-items:center;gap:.4rem;padding:.35rem 0}
+.kanban-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.kanban-col-label{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.03em;flex:1}
+.kanban-count{font-size:.62rem;font-family:'Space Mono',monospace;background:rgba(255,255,255,.07);border-radius:10px;padding:1px 7px;color:rgba(255,255,255,.45)}
+.kanban-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-left-width:3px;border-radius:0 8px 8px 0;padding:.75rem .8rem}
+.kanban-card-name{font-family:'Playfair Display',serif;font-size:.82rem;color:var(--white);line-height:1.3;margin-bottom:4px}
+.kanban-card-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:.65rem;color:rgba(255,255,255,.4)}
+.kanban-empty{background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.08);border-radius:8px;padding:.9rem;text-align:center;font-size:.7rem;color:rgba(255,255,255,.2)}
+
+/* AGENCY GRID */
+.agency-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:.8rem}
+.agency-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-top:3px solid;border-radius:0 0 10px 10px;padding:1rem 1.1rem}
+.agency-abbr{font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700;margin-bottom:2px}
+.agency-name{font-size:.72rem;color:rgba(255,255,255,.5);margin-bottom:.6rem}
+.agency-spend{font-family:'Space Mono',monospace;font-size:.95rem;font-weight:700;color:var(--lime)}
+.agency-desc{font-size:.74rem;color:rgba(255,255,255,.5);line-height:1.6;margin:.5rem 0 .75rem}
+.agency-actions{display:flex;gap:.4rem}
+
+/* CONTACT GRID */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
+.contact-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem 1.1rem}
+.contact-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;flex-shrink:0}
+.contact-name{font-size:.88rem;font-weight:600;color:var(--white)}
+.contact-role{font-size:.7rem;color:rgba(255,255,255,.45)}
+
+/* OUTREACH LOG */
+.outreach-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem}
+.outreach-subject{font-size:.82rem;color:var(--white);line-height:1.35;margin-bottom:4px}
+.outreach-meta{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:flex-start;justify-content:flex-end}
+.modal-overlay.open{display:flex}
+.modal-panel{width:min(700px,100vw);height:100vh;background:var(--deepnavy);border-left:1px solid rgba(255,255,255,.1);overflow-y:auto;display:flex;flex-direction:column;animation:slideIn .25s ease}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.modal-head{padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--deepnavy);z-index:10}
+.modal-body{padding:1.25rem;flex:1;display:flex;flex-direction:column;gap:1rem}
+.modal-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;line-height:1;padding:.25rem}
+.modal-close:hover{color:var(--white)}
+
+/* SETUP SCREEN */
+.setup-screen{display:none;position:fixed;inset:0;background:var(--deepnavy);z-index:500;overflow-y:auto;padding:2rem}
+.setup-screen.active{display:block}
+.setup-inner{max-width:680px;margin:0 auto}
+.setup-step{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:1.25rem;margin-bottom:.75rem}
+.setup-step-num{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--olive);font-weight:700;letter-spacing:.08em;margin-bottom:.35rem}
+.setup-step-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--white);margin-bottom:.4rem}
+.setup-step-desc{font-size:.82rem;color:rgba(255,255,255,.55);line-height:1.7}
+.setup-code{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:.6rem .9rem;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--lime);margin-top:.5rem;word-break:break-all}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:14px;right:14px;z-index:999;padding:.7rem 1.1rem;border-radius:8px;font-size:.83rem;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:340px;border:1px solid rgba(255,255,255,.12);animation:fadeIn .2s ease;pointer-events:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.notif-success{background:var(--olive);color:var(--white)}
+.notif-info{background:var(--navy);color:var(--white)}
+.notif-warn{background:#92400e;color:var(--white)}
+
+/* LOADING */
+.loading-bar{height:2px;background:linear-gradient(90deg,var(--olive),var(--lime),var(--olive));background-size:200% 100%;animation:loading 1.2s linear infinite;display:none}
+.loading-bar.active{display:block}
+@keyframes loading{0%{background-position:0% 0}100%{background-position:200% 0}}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:.4rem;flex-wrap:wrap}
+.filter-tab{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:.3rem .7rem;font-size:.74rem;font-weight:600;color:rgba(255,255,255,.55);transition:all .15s}
+.filter-tab.active{background:var(--olive);color:var(--white);border-color:var(--olive)}
+.filter-tab:hover:not(.active){color:var(--white)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+select option{background:var(--navy)}
+::placeholder{color:rgba(255,255,255,.25)}
+
+@media(max-width:680px){
+  .header-badges{display:none}
+  .stat-card{min-width:80px}
+  .kanban{flex-direction:column}
+  .kanban-col{min-width:unset;flex:unset}
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-inner">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--olive);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+        <svg viewBox="0 0 26 26" fill="none" width="30" height="30"><circle cx="13" cy="13" r="11" stroke="white" stroke-width="1.5" fill="none"/><path d="M13 6 L13 20 M6 13 L20 13" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="13" r="3" fill="white" opacity=".9"/></svg>
+      </div>
+      <h1 class="serif" style="font-size:1.6rem;color:var(--white);margin-bottom:.4rem">GovCon Command Center</h1>
+      <p style="color:rgba(255,255,255,.5);font-size:.88rem">One-time setup — takes about 10 minutes total</p>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">STEP 1</div>
+      <div class="setup-step-title">Create a Notion Integration</div>
+      <div class="setup-step-desc">
+        Go to <strong style="color:var(--lime)">notion.so/my-integrations</strong> → New integration → Name it "GovCon Dashboard" → select your workspace → submit.<br>
+        Copy the <strong>Internal Integration Secret</strong> token that appears. It starts with <span class="mono" style="font-size:.75rem;color:var(--lime)">ntn_...</span>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">STEP 2</div>
+      <div class="setup-step-title">Share your 5 Notion databases with the integration</div>
+      <div class="setup-step-desc">
+        In Notion, open each of these databases. Click <strong>••• → Connections → Connect to → GovCon Dashboard</strong>:<br><br>
+        🎯 Opportunities Pipeline &nbsp;·&nbsp; 👥 Decision-Maker CRM &nbsp;·&nbsp; ✉️ Outreach Log &nbsp;·&nbsp; 📁 Marketing Assets &nbsp;·&nbsp; ✅ SBA Readiness
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">STEP 3</div>
+      <div class="setup-step-title">Deploy the Cloudflare Worker proxy (free, 2 minutes)</div>
+      <div class="setup-step-desc">
+        The Notion API blocks direct browser requests, so we use a tiny free proxy:<br><br>
+        1. Go to <strong style="color:var(--lime)">workers.cloudflare.com</strong> → Create account (free) → Create Worker<br>
+        2. Replace the default code with the contents of <span class="mono" style="font-size:.75rem;color:var(--lime)">govcon/cloudflare-worker.js</span> from your GitHub repo<br>
+        3. Click <strong>Settings → Variables → Add Variable</strong>: name = <span class="mono" style="font-size:.75rem;color:var(--lime)">NOTION_TOKEN</span>, value = your token from Step 1<br>
+        4. Deploy. Your Worker URL will look like: <span class="setup-code">https://notion-proxy.yourname.workers.dev</span>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">STEP 4</div>
+      <div class="setup-step-title">Connect the dashboard</div>
+      <div class="setup-step-desc">Enter your Cloudflare Worker URL below. The Notion token stays on the Worker — it never touches your browser or GitHub.</div>
+      <div style="margin-top:.85rem;display:flex;flex-direction:column;gap:.6rem">
+        <div class="form-group">
+          <label class="form-label">Cloudflare Worker URL</label>
+          <input type="url" id="setupProxyUrl" class="form-input" placeholder="https://notion-proxy.yourname.workers.dev" autocomplete="off">
+        </div>
+        <button class="btn btn-olive" onclick="saveSetup()" style="align-self:flex-start;padding:.65rem 1.5rem">
+          ✓ Connect &amp; Launch Dashboard
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="launchDemo()" style="align-self:flex-start">
+          Preview with demo data →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif" style="display:none"></div>
+
+<!-- LOADING BAR -->
+<div class="loading-bar" id="loadingBar"></div>
+
+<!-- OUTREACH MODAL -->
+<div class="modal-overlay" id="outreachModal" onclick="closeOutreachIfBg(event)">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <div>
+        <div class="sec-label">Outreach Composer</div>
+        <div class="serif" style="font-size:1rem;color:var(--white)" id="outreachModalTitle">Draft Email</div>
+      </div>
+      <button class="modal-close" onclick="closeOutreach()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Template</label>
+        <select class="form-select" id="outreachTemplate" onchange="applyTemplate()">
+          <option>Cold Intro — CO</option>
+          <option>Cold Intro — Small Biz Specialist</option>
+          <option>Follow-Up #1 (14 days)</option>
+          <option>Follow-Up #2 (30 days)</option>
+          <option>Micropurchase Direct Offer</option>
+          <option>Sources Sought Response</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">To (Email)</label>
+        <input type="email" id="outreachTo" class="form-input" placeholder="contracting.officer@agency.gov">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <input type="text" id="outreachSubject" class="form-input">
+      </div>
+      <div class="form-group" style="flex:1">
+        <label class="form-label">Body</label>
+        <textarea id="outreachBody" class="form-textarea" style="min-height:300px"></textarea>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-olive" onclick="logOutreach()" id="logOutreachBtn">✉ Log to Notion + Set Follow-Up</button>
+        <button class="btn btn-ghost" onclick="openMailClient()">Open in Mail App</button>
+        <button class="btn btn-ghost" onclick="copyEmailBody()">Copy Body</button>
+      </div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.35)">
+        "Log to Notion" saves the outreach record and automatically sets a 14-day follow-up reminder in your Outreach Log database.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-mark">
+        <svg viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="white" stroke-width="1.5" fill="none"/><path d="M13 6 L13 20 M6 13 L20 13" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="13" r="3" fill="white" opacity=".9"/></svg>
+      </div>
+      <div>
+        <div class="brand-name">Unified Solutions Inc.</div>
+        <div class="brand-sub">GovCon Command Center</div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-lime">SDVOSB</span>
+        <span class="badge badge-teal">CAGE 8CX74</span>
+        <span class="badge badge-olive">ICF PCC</span>
+        <span class="badge badge-gray">NAICS 611430</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost btn-sm" onclick="loadAllData()" id="syncBtn">↻ Sync</button>
+        <button class="btn btn-ghost btn-sm" onclick="showSetup()">⚙ Setup</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-card"><span class="stat-val" id="statQueue" style="color:var(--amber)">—</span><span class="stat-label">In Queue</span></div>
+      <div class="stat-card"><span class="stat-val" id="statPipeline" style="color:var(--lime)">—</span><span class="stat-label">Pipeline</span></div>
+      <div class="stat-card"><span class="stat-val" id="statScore" style="color:var(--lime)">—</span><span class="stat-label">Avg Score</span></div>
+      <div class="stat-card"><span class="stat-val" id="statValue" style="color:var(--lime)">—</span><span class="stat-label">Est. Value</span></div>
+      <div class="stat-card"><span class="stat-val" id="statOutreach" style="color:var(--blue)">—</span><span class="stat-label">Outreach</span></div>
+      <div class="stat-card"><span class="stat-val" id="statFollowups" style="color:var(--red)">—</span><span class="stat-label">Follow-Ups</span></div>
+      <div class="stat-card"><span class="stat-val" id="statContacts" style="color:var(--teal)">—</span><span class="stat-label">Contacts</span></div>
+      <div class="stat-card"><span class="stat-val" style="color:var(--lime);font-size:.8rem">Active ✓</span><span class="stat-label">SAM.gov</span></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="setTab('queue', this)">🎯 Queue</button>
+      <button class="nav-btn" onclick="setTab('pipeline', this)">📊 Pipeline</button>
+      <button class="nav-btn" onclick="setTab('outreach-log', this)">✉️ Outreach</button>
+      <button class="nav-btn" onclick="setTab('agencies', this)">🏛️ Agencies</button>
+      <button class="nav-btn" onclick="setTab('contacts', this)">👥 Contacts</button>
+      <div class="nav-spacer"></div>
+      <button class="btn btn-olive btn-sm" onclick="openOutreach(null)" style="margin:.4rem 0">+ New Outreach</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ── OPPORTUNITY QUEUE ────────────────────────────────────────────── -->
+    <div class="page active" id="page-queue">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1rem;gap:.75rem;flex-wrap:wrap">
+        <div>
+          <div class="sec-label">Opportunity Queue</div>
+          <h2 class="serif" style="font-size:1.25rem" id="queueHeadline">Opportunities awaiting review</h2>
+        </div>
+        <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
+          <input type="search" id="queueSearch" class="form-input" placeholder="Search…" style="width:190px;font-size:.8rem" oninput="renderQueue()">
+          <a href="https://sam.gov/search/?index=opp&naicsCode=611430" target="_blank" class="btn btn-ghost btn-sm">🔍 SAM.gov →</a>
+        </div>
+      </div>
+      <div id="queueList" style="display:flex;flex-direction:column;gap:.65rem"></div>
+    </div>
+
+    <!-- ── PIPELINE BOARD ────────────────────────────────────────────────── -->
+    <div class="page" id="page-pipeline">
+      <div style="margin-bottom:1rem">
+        <div class="sec-label">Pipeline Board</div>
+        <h2 class="serif" style="font-size:1.25rem" id="pipelineHeadline">Active opportunities</h2>
+      </div>
+      <div class="kanban" id="kanbanBoard"></div>
+    </div>
+
+    <!-- ── OUTREACH LOG ───────────────────────────────────────────────────── -->
+    <div class="page" id="page-outreach-log">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem" id="outreachLayout">
+        <div>
+          <div class="sec-label" style="margin-bottom:.35rem">Outreach Log</div>
+          <h2 class="serif" style="font-size:1.15rem;margin-bottom:.85rem" id="outreachHeadline">All interactions</h2>
+          <div style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+            <button class="filter-tab active" onclick="filterOutreach('all',this)">All</button>
+            <button class="filter-tab" onclick="filterOutreach('awaiting',this)">⏳ Awaiting</button>
+            <button class="filter-tab" onclick="filterOutreach('responded',this)">✉️ Responded</button>
+          </div>
+          <div id="outreachList"></div>
+        </div>
+        <div>
+          <div class="sec-label" style="margin-bottom:.35rem">Quick Compose</div>
+          <h2 class="serif" style="font-size:1.15rem;margin-bottom:.85rem">Draft Outreach</h2>
+          <div style="display:flex;flex-direction:column;gap:.65rem">
+            <div class="form-group">
+              <label class="form-label">Template</label>
+              <select class="form-select" id="quickTemplate" onchange="applyQuickTemplate()">
+                <option>Cold Intro — CO</option>
+                <option>Cold Intro — Small Biz Specialist</option>
+                <option>Follow-Up #1 (14 days)</option>
+                <option>Follow-Up #2 (30 days)</option>
+                <option>Micropurchase Direct Offer</option>
+                <option>Sources Sought Response</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">To</label>
+              <input type="email" id="quickTo" class="form-input" placeholder="email@agency.gov">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <input type="text" id="quickSubject" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Body</label>
+              <textarea id="quickBody" class="form-textarea" style="min-height:240px"></textarea>
+            </div>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+              <button class="btn btn-olive" onclick="logQuickOutreach()">✉ Log to Notion</button>
+              <button class="btn btn-ghost btn-sm" onclick="openQuickMail()">Open in Mail</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AGENCY INTEL ───────────────────────────────────────────────────── -->
+    <div class="page" id="page-agencies">
+      <div style="margin-bottom:1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div class="sec-label">Agency Intelligence</div>
+          <h2 class="serif" style="font-size:1.25rem">Procurement landscape — Federal, State &amp; Local</h2>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterAgencies('all',this)">All</button>
+          <button class="filter-tab" onclick="filterAgencies('Federal',this)">Federal</button>
+          <button class="filter-tab" onclick="filterAgencies('State',this)">State</button>
+          <button class="filter-tab" onclick="filterAgencies('Local',this)">Local</button>
+        </div>
+      </div>
+      <div class="agency-grid" id="agencyGrid"></div>
+    </div>
+
+    <!-- ── CONTACTS ────────────────────────────────────────────────────────── -->
+    <div class="page" id="page-contacts">
+      <div style="margin-bottom:1rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div class="sec-label">Decision-Maker CRM</div>
+          <h2 class="serif" style="font-size:1.25rem" id="contactsHeadline">Contacts</h2>
+        </div>
+        <a href="https://www.notion.so/f18d3e1ae2a74f98a9fe34b8e72d4824" target="_blank" class="btn btn-olive btn-sm">+ Add in Notion</a>
+      </div>
+      <div class="contact-grid" id="contactGrid"></div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- FOOTER -->
+  <footer style="border-top:1px solid rgba(255,255,255,.06);padding:.75rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+    <div style="font-size:.65rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.3)">
+      Unified Solutions Inc. · SDVOSB · CAGE 8CX74 · UEI LU14TAVD5JS7 · SAM.gov Active
+    </div>
+    <div style="display:flex;gap:.4rem">
+      <a href="https://www.notion.so/349b92d026ff816fa45fd27977206f24" target="_blank" class="btn btn-ghost btn-sm">Notion Backend →</a>
+      <a href="/government" class="btn btn-ghost btn-sm">Gov Page →</a>
+      <a href="https://sam.gov" target="_blank" class="btn btn-ghost btn-sm">SAM.gov →</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════════════
+const DB_IDS = {
+  opportunities: 'd66cf182-0ad9-4aa3-b2be-19ba995e9d45',
+  contacts:      'f18d3e1a-e2a7-4f98-a9fe-34b8e72d4824',
+  outreach:      '9d3735cd-f7dc-4140-88e3-778f63368373',
+};
+
+const STATUSES = ['📋 Qualifying','✉️ Outreach Sent','📞 In Conversation','📄 Proposal Prep','📨 Submitted','✅ Won'];
+const STATUS_COLORS = {'📋 Qualifying':'#3B82F6','✉️ Outreach Sent':'#F59E0B','📞 In Conversation':'#F97316','📄 Proposal Prep':'#8B5CF6','📨 Submitted':'#06B6D4','✅ Won':'#7A9C28'};
+
+// ══════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════
+let opps = [], contacts = [], outreachItems = [];
+let currentOutreachOpp = null;
+let outreachFilter = 'all';
+let agencyFilter = 'all';
+let isDemo = false;
+
+// ══════════════════════════════════════════════════════════════════════════
+// NOTION API
+// ══════════════════════════════════════════════════════════════════════════
+function getProxy() { return (localStorage.getItem('govcon_proxy_url') || '').replace(/\/$/, ''); }
+
+async function notionReq(endpoint, method = 'GET', body = null) {
+  const proxy = getProxy();
+  if (!proxy) throw new Error('No proxy configured');
+  const resp = await fetch(`${proxy}/v1/${endpoint}`, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!resp.ok) throw new Error(`Notion API error: ${resp.status}`);
+  return resp.json();
+}
+
+async function queryDB(dbId) {
+  return notionReq(`databases/${dbId}/query`, 'POST', {
+    page_size: 100,
+    sorts: [{ timestamp: 'last_edited_time', direction: 'descending' }],
+  });
+}
+
+async function patchPage(pageId, props) {
+  return notionReq(`pages/${pageId}`, 'PATCH', { properties: props });
+}
+
+async function createPage(dbId, props) {
+  return notionReq('pages', 'POST', { parent: { database_id: dbId }, properties: props });
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// PROPERTY HELPERS
+// ══════════════════════════════════════════════════════════════════════════
+const getTitle = p => { for (const k in p.properties) if (p.properties[k].type === 'title') return p.properties[k].title.map(t => t.plain_text).join(''); return ''; };
+const getSel   = (p, k) => p.properties[k]?.select?.name || '';
+const getNum   = (p, k) => p.properties[k]?.number || 0;
+const getDate_ = (p, k) => p.properties[k]?.date?.start || '';
+const getText_ = (p, k) => p.properties[k]?.rich_text?.map(t => t.plain_text).join('') || '';
+const getEmail_= (p, k) => p.properties[k]?.email || '';
+const getMsel  = (p, k) => p.properties[k]?.multi_select?.map(s => s.name) || [];
+
+function mapOpp(p) {
+  return { id:p.id, name:getTitle(p), status:getSel(p,'Status'), agency:getSel(p,'Agency'),
+    procType:getSel(p,'Procurement Type'), value:getNum(p,'Contract Value Est'),
+    score:getNum(p,'Match Score'), deadline:getDate_(p,'Response Deadline'),
+    sdvosb:getSel(p,'SDVOSB Preference'), priority:getSel(p,'Priority'),
+    pocName:getText_(p,'POC Name'), pocEmail:getEmail_(p,'POC Email'),
+    solicitation:getText_(p,'Solicitation Number'), services:getMsel(p,'Service Match'),
+    naics:getSel(p,'NAICS Code'), psc:getSel(p,'PSC Code') };
+}
+function mapContact(p) {
+  return { id:p.id, name:getTitle(p), role:getSel(p,'Role'), agency:getSel(p,'Agency'),
+    relStatus:getSel(p,'Relationship Status'), authority:getSel(p,'Procurement Authority'),
+    email:getEmail_(p,'Email'), sdvosbInterest:getSel(p,'SDVOSB Interest'),
+    nextFollowUp:getDate_(p,'Next Follow-Up Date') };
+}
+function mapOutreach(p) {
+  return { id:p.id, subject:getTitle(p), type:getSel(p,'Type'), status:getSel(p,'Status'),
+    template:getSel(p,'Template Used'), date:getDate_(p,'Date'), followUpDue:getDate_(p,'Follow-Up Due') };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// DATA LOADING
+// ══════════════════════════════════════════════════════════════════════════
+async function loadAllData() {
+  setLoading(true);
+  notify('Syncing with Notion…', 'info', 1500);
+  try {
+    const [or, cr, outr] = await Promise.all([queryDB(DB_IDS.opportunities), queryDB(DB_IDS.contacts), queryDB(DB_IDS.outreach)]);
+    opps = (or.results || []).map(mapOpp);
+    contacts = (cr.results || []).map(mapContact);
+    outreachItems = (outr.results || []).map(mapOutreach);
+    isDemo = false;
+    notify('Synced with Notion ✓', 'success');
+  } catch(e) {
+    if (!getProxy()) { notify('Enter your proxy URL in Setup ⚙', 'warn'); }
+    else { notify('Sync failed — using cached data', 'warn'); }
+    if (opps.length === 0) { opps = DEMO_OPPS; contacts = DEMO_CONTACTS; outreachItems = DEMO_OUTREACH; isDemo = true; }
+  }
+  setLoading(false);
+  updateStats();
+  renderAll();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════════════════════════════════
+async function acceptOpp(id) {
+  const opp = opps.find(o => o.id === id);
+  if (!opp) return;
+  opp.status = '📋 Qualifying';
+  notify(`✓ "${opp.name}" added to pipeline`, 'success');
+  renderAll();
+  if (!isDemo) {
+    try { await patchPage(id, { 'Status': { select: { name: '📋 Qualifying' } }, 'Priority': { select: { name: '🔴 High' } } }); }
+    catch(e) { console.warn('Notion write failed', e); }
+  }
+}
+
+async function denyOpp(id) {
+  const opp = opps.find(o => o.id === id);
+  if (!opp) return;
+  opp.status = '❌ Not Pursuing';
+  notify('Opportunity marked as not pursuing', 'info');
+  renderAll();
+  if (!isDemo) {
+    try { await patchPage(id, { 'Status': { select: { name: '❌ Not Pursuing' } } }); }
+    catch(e) { console.warn('Notion write failed', e); }
+  }
+}
+
+async function updateOppStatus(id, newStatus) {
+  const opp = opps.find(o => o.id === id);
+  if (!opp) return;
+  opp.status = newStatus;
+  notify(`Status → ${newStatus}`, 'info');
+  renderPipeline();
+  if (!isDemo) {
+    try { await patchPage(id, { 'Status': { select: { name: newStatus } } }); }
+    catch(e) { console.warn('Notion write failed', e); }
+  }
+}
+
+async function logOutreach() {
+  const subject = _id('outreachSubject').value;
+  const template = _id('outreachTemplate').value;
+  const to = _id('outreachTo').value;
+  if (!subject) { notify('Add a subject line first', 'warn'); return; }
+  _id('logOutreachBtn').textContent = '⟳ Saving…';
+  const today = new Date().toISOString().split('T')[0];
+  const followUp = new Date(Date.now() + 14*86400000).toISOString().split('T')[0];
+  const newItem = { id: 'local_' + Date.now(), subject, template, type: '📧 Email — Cold Intro', status: '📞 Awaiting Response', date: today, followUpDue: followUp };
+  outreachItems.unshift(newItem);
+  if (!isDemo) {
+    try {
+      await createPage(DB_IDS.outreach, {
+        'Subject / Title': { title: [{ text: { content: subject } }] },
+        'Type': { select: { name: '📧 Email — Cold Intro' } },
+        'Direction': { select: { name: '📤 Outbound' } },
+        'Status': { select: { name: '📞 Awaiting Response' } },
+        'Template Used': { select: { name: template } },
+        'Date': { date: { start: today } },
+        'Follow-Up Due': { date: { start: followUp } },
+      });
+    } catch(e) { console.warn('Notion write failed', e); }
+  }
+  notify('✉ Outreach logged — follow-up set for 14 days', 'success');
+  _id('logOutreachBtn').textContent = '✉ Log to Notion + Set Follow-Up';
+  closeOutreach();
+  updateStats();
+  renderOutreach();
+}
+
+async function logQuickOutreach() {
+  const subject = _id('quickSubject').value;
+  const template = _id('quickTemplate').value;
+  if (!subject) { notify('Add a subject line first', 'warn'); return; }
+  const today = new Date().toISOString().split('T')[0];
+  const followUp = new Date(Date.now() + 14*86400000).toISOString().split('T')[0];
+  outreachItems.unshift({ id:'local_'+Date.now(), subject, template, type:'📧 Email — Cold Intro', status:'📞 Awaiting Response', date:today, followUpDue:followUp });
+  if (!isDemo) {
+    try {
+      await createPage(DB_IDS.outreach, {
+        'Subject / Title': { title: [{ text: { content: subject } }] },
+        'Type': { select: { name: '📧 Email — Cold Intro' } },
+        'Direction': { select: { name: '📤 Outbound' } },
+        'Status': { select: { name: '📞 Awaiting Response' } },
+        'Template Used': { select: { name: template } },
+        'Date': { date: { start: today } },
+        'Follow-Up Due': { date: { start: followUp } },
+      });
+    } catch(e) { console.warn('Notion write failed', e); }
+  }
+  notify('✉ Outreach logged — follow-up set for 14 days', 'success');
+  updateStats();
+  renderOutreach();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// EMAIL TEMPLATES
+// ══════════════════════════════════════════════════════════════════════════
+const TEMPLATES = {
+  'Cold Intro — CO': {
+    subj: 'SDVOSB ICF PCC Executive Coaching — Capabilities Introduction, {agency}',
+    body: `Dear {poc},
+
+My name is Julian C. Johnson. I am the President and CEO of Unified Solutions Inc. (CAGE: 8CX74 | UEI: LU14TAVD5JS7), a Service-Disabled Veteran Owned Small Business (SDVOSB) based in Plymouth, Minnesota.
+
+I am reaching out to introduce our capabilities in professional leadership coaching and management development training (NAICS 611430) as {agency} conducts market research for current and upcoming requirements.
+
+What we provide:
+• ICF PCC-credentialed 1:1 executive coaching for GS-14/15, SES, and senior civilian/military leaders
+• Group leadership coaching cohorts — proven across Cornell, Yale SOM, MIT Sloan, Wharton, and Columbia via ExecOnline
+• ICF ACTC-level team coaching for leadership teams
+• Assessment-informed development (Big Five, HEXACO, TRACOM, 360-degree)
+
+We are structured for Micropurchase (≤$15K) and Simplified Acquisition (≤$350K) engagements. SDVOSB certification supports set-aside and sole-source award eligibility.
+
+Capabilities Statement attached for reference.
+
+Julian C. Johnson, ICF PCC | President & CEO
+Unified Solutions Inc. | SDVOSB | CAGE 8CX74
+952.594.8611 | contact@unifiedsolutionsinc.com
+unifiedsolutionsinc.com/government`,
+  },
+  'Cold Intro — Small Biz Specialist': {
+    subj: 'SDVOSB Introduction — ICF PCC Leadership Coaching, NAICS 611430 | Unified Solutions Inc.',
+    body: `Dear {poc},
+
+I am writing to introduce Unified Solutions Inc. (CAGE: 8CX74), a Service-Disabled Veteran Owned Small Business providing ICF-credentialed executive leadership coaching and management development training.
+
+I understand your office connects qualified small businesses with {agency} procurement opportunities, and I wanted to ensure our capabilities are on your radar.
+
+SDVOSB profile at a glance:
+• CAGE: 8CX74 | UEI: LU14TAVD5JS7 | SAM.gov: Active
+• Primary NAICS: 611430 | Secondary: 541611, 541612, 541990
+• Founder: Julian C. Johnson, ICF PCC — U.S. Army veteran, 1,200+ coaching hours, 222+ clients
+• Faculty: ExecOnline (Cornell, Yale SOM, MIT Sloan, Wharton, Columbia) and Emeritus
+
+Well-suited for Micropurchase and Simplified Acquisition engagements.
+
+Is there a matchmaking event, sources sought, or upcoming requirement where connecting would make sense?
+
+Julian C. Johnson, ICF PCC
+Unified Solutions Inc. | SDVOSB | CAGE 8CX74
+952.594.8611 | contact@unifiedsolutionsinc.com`,
+  },
+  'Follow-Up #1 (14 days)': {
+    subj: 'Following up — SDVOSB Leadership Coaching Capabilities, Unified Solutions Inc.',
+    body: `Dear {poc},
+
+I wanted to follow up briefly on my note from two weeks ago introducing Unified Solutions Inc. — our SDVOSB leadership coaching capabilities under NAICS 611430.
+
+If there is a current or upcoming requirement at {agency} for executive coaching, leadership development training, or team coaching, I believe we are a strong match and would welcome the opportunity to discuss.
+
+If this isn't the right time or fit, a brief reply is genuinely appreciated — it helps me direct outreach appropriately.
+
+Julian C. Johnson, ICF PCC
+Unified Solutions Inc. | SDVOSB | CAGE 8CX74
+952.594.8611 | contact@unifiedsolutionsinc.com`,
+  },
+  'Follow-Up #2 (30 days)': {
+    subj: 'Last note — SDVOSB Coaching Capabilities | Unified Solutions Inc.',
+    body: `Dear {poc},
+
+This will be my last note unless I hear from you — I do not want to crowd your inbox.
+
+Unified Solutions Inc. | SDVOSB | ICF PCC
+CAGE: 8CX74 | UEI: LU14TAVD5JS7 | NAICS: 611430
+contact@unifiedsolutionsinc.com | 952.594.8611
+unifiedsolutionsinc.com/government
+
+Services: Executive coaching, group cohorts, team coaching, leadership workshops, assessment-informed development. Available under Micropurchase and Simplified Acquisition.
+
+Wishing you well in your work.
+
+Julian C. Johnson, ICF PCC`,
+  },
+  'Micropurchase Direct Offer': {
+    subj: 'Micropurchase Leadership Coaching — Under $15K, No Competition Required | Unified Solutions Inc.',
+    body: `Dear {poc},
+
+Following our recent conversation, I wanted to share specific options within the $15,000 Micropurchase threshold (FAR 13.2), payable by GPC:
+
+Option A — Leadership Kick-Off Coaching: 3 sessions (90 min each), ICF PCC 1:1 coaching. $3,500–$5,000.
+
+Option B — Assessment + Debrief Package: One validated assessment (Big Five, HEXACO, or TRACOM) with 90-min certified debrief and development recommendations. $1,500–$2,500.
+
+Option C — Half-Day Leadership Workshop: 4-hour facilitated workshop for up to 15 participants. $4,500–$8,000.
+
+Option D — Team Diagnostic Session: Half-day team assessment and facilitation. $3,500–$6,000.
+
+No competition, no formal solicitation required. Happy to tailor a Statement of Work at your request.
+
+Julian C. Johnson, ICF PCC
+Unified Solutions Inc. | SDVOSB | CAGE 8CX74`,
+  },
+  'Sources Sought Response': {
+    subj: 'Sources Sought Response — {agency} — SDVOSB ICF PCC Leadership Coaching | CAGE 8CX74',
+    body: `SOURCES SOUGHT RESPONSE
+Agency: {agency} | Solicitation: {solicitation}
+
+1. COMPANY INFORMATION
+Unified Solutions Inc. | CAGE: 8CX74 | UEI: LU14TAVD5JS7 | DUNS: 08-127-2068
+Primary NAICS: 611430 | SAM.gov: Active | SDVOSB: SBA Certified | Minority-Owned
+POC: Julian C. Johnson, President & CEO
+952.594.8611 | contact@unifiedsolutionsinc.com
+13800 61st Ave N., Plymouth, MN 55446
+
+2. CAPABILITY STATEMENT
+Unified Solutions Inc. provides ICF PCC-credentialed executive leadership coaching, group coaching cohorts, team coaching, and professional management development training. Founder Julian C. Johnson holds the ICF PCC credential (independently verified) and is an ACTC Candidate. He has accumulated 1,200+ formal coaching hours with 222+ clients across all major sectors. Faculty: ExecOnline (Cornell, Yale SOM, MIT Sloan, Wharton, Columbia, Berkeley Haas, Michigan Ross, UVA Darden) and Emeritus.
+
+Core competencies:
+• ICF PCC 1:1 executive coaching for GS-14/15, SES, and senior civilian/military leaders
+• Group leadership coaching cohorts (4–12 participants, 6–12 weeks, virtual or in-person)
+• ICF ACTC-level team coaching for federal leadership teams
+• Custom leadership workshops and facilitation
+• Assessment-informed development: Big Five, HEXACO, TRACOM, SCARF, 360-degree (HPTI and AgileBrain certified)
+
+3. PAST PERFORMANCE (FAR 15.305(a)(2)(iii))
+ExecOnline (9 university partners) | 460+ hours | 1:1 coaching & group cohort facilitation
+Navy Federal Credit Union | VP Leadership Cohort | Oct 2025
+United Health Group | Business Transformation Programs
+Cigna Health | Leading Transformation Group
+Torch Platform | 780+ hours, 222+ clients, all sectors
+
+4. SET-ASIDE RECOMMENDATION
+Strongly support SDVOSB set-aside. As an SBA-certified SDVOSB, eligible for set-aside and sole-source awards.
+
+Julian C. Johnson, President & CEO
+Unified Solutions Inc.`,
+  },
+};
+
+function fillTemplate(key, agency = '[Agency]', poc = 'Contracting Officer', solicitation = '') {
+  const t = TEMPLATES[key];
+  if (!t) return { subj: '', body: '' };
+  return {
+    subj: t.subj.replace(/{agency}/g, agency),
+    body: t.body.replace(/{agency}/g, agency).replace(/{poc}/g, poc).replace(/{solicitation}/g, solicitation || '[Solicitation Number]'),
+  };
+}
+
+function applyTemplate() {
+  const key = _id('outreachTemplate').value;
+  const agency = currentOutreachOpp?.agency || '[Agency]';
+  const poc = currentOutreachOpp?.pocName || 'Contracting Officer';
+  const sol = currentOutreachOpp?.solicitation || '';
+  const { subj, body } = fillTemplate(key, agency, poc, sol);
+  _id('outreachSubject').value = subj;
+  _id('outreachBody').value = body;
+}
+
+function applyQuickTemplate() {
+  const key = _id('quickTemplate').value;
+  const { subj, body } = fillTemplate(key);
+  _id('quickSubject').value = subj;
+  _id('quickBody').value = body;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════════════════════
+function renderAll() { renderQueue(); renderPipeline(); renderOutreach(); renderAgencies(); renderContacts(); }
+
+function renderQueue() {
+  const q = _id('queueSearch')?.value?.toLowerCase() || '';
+  const queue = opps.filter(o => !o.status || o.status === '🔍 Identified');
+  _id('queueHeadline').textContent = `${queue.length} opportunit${queue.length === 1 ? 'y' : 'ies'} awaiting review`;
+  const filtered = queue.filter(o => !q || o.name.toLowerCase().includes(q) || (o.agency||'').toLowerCase().includes(q));
+
+  if (filtered.length === 0) {
+    _id('queueList').innerHTML = `<div class="card" style="padding:2.5rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:.5rem">🎯</div>
+      <div class="serif" style="font-size:1.05rem;margin-bottom:.4rem">Queue is clear</div>
+      <div class="muted" style="font-size:.83rem;margin-bottom:1.25rem">All opportunities have been reviewed. Find new ones on SAM.gov.</div>
+      <a href="https://sam.gov/search/?index=opp&naicsCode=611430" target="_blank" class="btn btn-olive">Search SAM.gov NAICS 611430 →</a>
+    </div>`;
+    return;
+  }
+
+  _id('queueList').innerHTML = filtered.map(opp => {
+    const score = opp.score || 0;
+    const scoreClass = score >= 80 ? 'score-high' : score >= 60 ? 'score-mid' : '';
+    const scoreColor = score >= 80 ? 'var(--lime)' : score >= 60 ? 'var(--amber)' : 'var(--red)';
+    const sdvosbBadge = opp.sdvosb?.includes('Yes') ? `<span class="badge badge-lime">SDVOSB ✓</span>` : '';
+    const typeBadge = opp.procType?.includes('Micropurchase') ? 'badge-lime' : opp.procType?.includes('SDVOSB') ? 'badge-purple' : 'badge-blue';
+    const typeLabel = (opp.procType || '').replace(' ≤$350K','').replace(' ≤$15K','');
+    const valueStr = opp.value ? `$${opp.value.toLocaleString()}` : '';
+    const hint = score >= 80 ? '✦ Strong match — recommend immediate outreach.' : score >= 60 ? 'Qualifying opportunity — worth investigating further.' : 'Lower priority — monitor or consider as teaming target.';
+
+    return `<div class="opp-card ${scoreClass}">
+      <div class="score-wrap">${scoreRingHTML(score, scoreColor)}</div>
+      <div class="opp-card-body">
+        <div class="opp-name">${esc(opp.name)}</div>
+        <div class="opp-meta">
+          ${opp.agency ? `<span class="pill">${esc(opp.agency)}</span>` : ''}
+          ${typeLabel ? `<span class="badge ${typeBadge}">${esc(typeLabel)}</span>` : ''}
+          ${sdvosbBadge}
+          ${valueStr ? `<span class="pill">${valueStr}</span>` : ''}
+          ${opp.deadline ? `<span class="pill">Due: ${opp.deadline}</span>` : ''}
+          ${opp.solicitation ? `<span class="pill mono" style="font-size:.6rem">${esc(opp.solicitation)}</span>` : ''}
+        </div>
+        <div class="opp-note">${hint}</div>
+      </div>
+      <div class="opp-actions">
+        <button class="btn btn-olive btn-sm" onclick="acceptOpp('${opp.id}')">✓ Accept</button>
+        <button class="btn btn-teal btn-sm" onclick="openOutreach('${opp.id}')">✉ Outreach</button>
+        <button class="btn btn-red btn-sm" onclick="denyOpp('${opp.id}')">✗ Skip</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function scoreRingHTML(score, color) {
+  const r = 22, circ = 2 * Math.PI * r;
+  const dash = (score / 100) * circ;
+  return `<svg width="54" height="54" style="flex-shrink:0">
+    <circle cx="27" cy="27" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+    <circle cx="27" cy="27" r="${r}" fill="none" stroke="${color}" stroke-width="4"
+      stroke-dasharray="${dash} ${circ}" stroke-linecap="round"
+      transform="rotate(-90 27 27)" style="transition:stroke-dasharray .6s ease"/>
+    <text x="27" y="28" text-anchor="middle" dominant-baseline="middle"
+      fill="${color}" font-size="12" font-family="Space Mono,monospace" font-weight="700">${score||'—'}</text>
+  </svg>`;
+}
+
+function renderPipeline() {
+  const board = _id('kanbanBoard');
+  const pipelineOpps = opps.filter(o => o.status && o.status !== '🔍 Identified' && o.status !== '❌ Not Pursuing');
+  _id('pipelineHeadline').textContent = `${pipelineOpps.length} active opportunit${pipelineOpps.length === 1 ? 'y' : 'ies'}`;
+
+  board.innerHTML = STATUSES.map(status => {
+    const col = STATUS_COLORS[status] || '#7A9C28';
+    const items = opps.filter(o => o.status === status);
+    return `<div class="kanban-col">
+      <div class="kanban-col-head">
+        <div class="kanban-dot" style="background:${col}"></div>
+        <div class="kanban-col-label">${status.replace(/^[^\w]+/,'')}</div>
+        <div class="kanban-count">${items.length}</div>
+      </div>
+      ${items.length === 0 ? '<div class="kanban-empty">Empty</div>' : items.map(o => {
+        const score = o.score || 0;
+        const sc = score >= 80 ? 'var(--lime)' : score >= 60 ? 'var(--amber)' : 'rgba(255,255,255,.3)';
+        return `<div class="kanban-card" style="border-left-color:${col}">
+          <div class="kanban-card-name">${esc(o.name)}</div>
+          <div class="kanban-card-meta">
+            <span>${esc(o.agency||'—')}</span>
+            ${score ? `<span class="mono" style="color:${sc};font-size:.65rem">${score}</span>` : ''}
+          </div>
+          ${o.value ? `<div style="font-size:.68rem;color:rgba(255,255,255,.35);margin-bottom:4px">$${o.value.toLocaleString()}</div>` : ''}
+          <select class="form-select" style="font-size:.68rem;padding:3px 6px" onchange="updateOppStatus('${o.id}',this.value)">
+            ${STATUSES.map(s => `<option ${s===status?'selected':''}>${s.replace(/^[^\w]+/,'')}</option>`).join('')}
+          </select>
+          <button class="btn btn-teal btn-sm" style="width:100%;margin-top:4px;font-size:.68rem" onclick="openOutreach('${o.id}')">✉ Outreach</button>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderOutreach() {
+  const all = outreachFilter === 'awaiting' ? outreachItems.filter(o => o.status?.includes('Awaiting'))
+    : outreachFilter === 'responded' ? outreachItems.filter(o => o.status?.includes('Responded'))
+    : outreachItems;
+  _id('outreachHeadline').textContent = `${outreachItems.length} interaction${outreachItems.length !== 1 ? 's' : ''} logged`;
+
+  const statusColor = s => s?.includes('Responded') ? 'var(--lime)' : s?.includes('Awaiting') ? 'var(--amber)' : s?.includes('No Response') ? 'var(--red)' : 'var(--teal)';
+
+  _id('outreachList').innerHTML = all.length === 0
+    ? `<div style="text-align:center;padding:2rem;color:rgba(255,255,255,.3);font-size:.83rem">No outreach logged yet</div>`
+    : all.map(o => `<div class="outreach-item">
+        <div class="outreach-subject">${esc(o.subject)}</div>
+        <div class="outreach-meta">
+          ${o.template ? `<span class="pill">${esc(o.template)}</span>` : ''}
+          ${o.date ? `<span class="pill">Sent: ${o.date}</span>` : ''}
+          ${o.status ? `<span class="badge" style="background:${statusColor(o.status)}22;color:${statusColor(o.status)};border-color:${statusColor(o.status)}44">${o.status}</span>` : ''}
+          ${o.followUpDue ? `<span class="pill" style="color:var(--amber)">Follow-up: ${o.followUpDue}</span>` : ''}
+        </div>
+      </div>`).join('');
+
+  // Apply quick template defaults
+  applyQuickTemplate();
+}
+
+function renderAgencies() {
+  const grid = _id('agencyGrid');
+  const filtered = AGENCY_DATA.filter(a => agencyFilter === 'all' || a.type === agencyFilter);
+  grid.innerHTML = filtered.map(a => `<div class="agency-card" style="border-top-color:${a.color}" data-type="${a.type}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+      <div>
+        <div class="agency-abbr" style="color:${a.color}">${a.icon} ${a.abbr}</div>
+        <div class="agency-name">${a.name}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="agency-spend">${a.spend}</div>
+        <div style="font-size:.6rem;color:rgba(255,255,255,.3)">annual est.</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.6rem">
+      <span class="badge badge-gray">${a.naics}</span>
+      <span class="badge ${a.sdvosb === 'Highest' ? 'badge-lime' : a.sdvosb === 'High' ? 'badge-olive' : 'badge-amber'}">SDVOSB: ${a.sdvosb}</span>
+      <span class="badge ${a.tier === 1 ? 'badge-red' : a.tier === 2 ? 'badge-amber' : 'badge-purple'}">Tier ${a.tier}</span>
+      <span class="badge badge-gray">${a.type}</span>
+    </div>
+    <div class="agency-desc">${a.desc}</div>
+    <div class="agency-actions">
+      <button class="btn btn-olive btn-sm" style="flex:1" onclick="openOutreachForAgency('${a.name}','${a.abbr}')">✉ Draft Intro</button>
+      <a href="https://sam.gov/search/?index=opp&naicsCode=${a.naics}" target="_blank" class="btn btn-ghost btn-sm">🔍 SAM.gov</a>
+    </div>
+  </div>`).join('');
+}
+
+function renderContacts() {
+  _id('contactsHeadline').textContent = `${contacts.length} contact${contacts.length !== 1 ? 's' : ''}`;
+  const relColor = s => s?.includes('Champion') ? '#8B5CF6' : s?.includes('Active') ? 'var(--lime)' : s?.includes('Connected') ? 'var(--teal)' : s?.includes('Warming') ? 'var(--amber)' : 'rgba(255,255,255,.35)';
+
+  if (contacts.length === 0) {
+    _id('contactGrid').innerHTML = `<div class="card" style="grid-column:1/-1;padding:2.5rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:.5rem">👥</div>
+      <div class="serif" style="font-size:1.05rem;margin-bottom:.4rem">No contacts yet</div>
+      <div class="muted" style="font-size:.83rem;margin-bottom:1.25rem">Add contracting officers and small business specialists to your Notion CRM as you identify them.</div>
+      <a href="https://www.notion.so/f18d3e1ae2a74f98a9fe34b8e72d4824" target="_blank" class="btn btn-olive">Open Decision-Maker CRM in Notion →</a>
+    </div>`;
+    return;
+  }
+
+  _id('contactGrid').innerHTML = contacts.map(c => {
+    const initials = c.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const rc = relColor(c.relStatus);
+    return `<div class="contact-card">
+      <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.65rem">
+        <div class="contact-avatar" style="background:var(--navy);border:2px solid ${rc};color:${rc}">${initials}</div>
+        <div>
+          <div class="contact-name">${esc(c.name)}</div>
+          <div class="contact-role">${esc(c.role||'—')}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.6rem">
+        ${c.agency ? `<span class="pill">${esc(c.agency)}</span>` : ''}
+        ${c.relStatus ? `<span class="badge" style="background:${rc}22;color:${rc};border-color:${rc}44">${c.relStatus}</span>` : ''}
+        ${c.authority ? `<span class="badge badge-gray">${esc(c.authority)}</span>` : ''}
+      </div>
+      ${c.email ? `<div style="font-size:.7rem;color:var(--teal);margin-bottom:.6rem;font-family:'Space Mono',monospace;word-break:break-all">${esc(c.email)}</div>` : ''}
+      ${c.nextFollowUp ? `<div style="font-size:.7rem;color:var(--amber);margin-bottom:.6rem">Follow-up: ${c.nextFollowUp}</div>` : ''}
+      <button class="btn btn-olive btn-sm btn-full" onclick="openOutreachForContact('${c.id}')">✉ Draft Outreach</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// OUTREACH MODAL
+// ══════════════════════════════════════════════════════════════════════════
+function openOutreach(oppId) {
+  currentOutreachOpp = oppId ? opps.find(o => o.id === oppId) : null;
+  _id('outreachModalTitle').textContent = currentOutreachOpp ? `Outreach: ${currentOutreachOpp.name}` : 'New Outreach';
+  _id('outreachTo').value = currentOutreachOpp?.pocEmail || '';
+  applyTemplate();
+  _id('outreachModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openOutreachForAgency(agencyName, agencyAbbr) {
+  currentOutreachOpp = { agency: agencyName, pocName: 'Contracting Officer', pocEmail: '', solicitation: '' };
+  _id('outreachModalTitle').textContent = `Outreach: ${agencyAbbr}`;
+  _id('outreachTo').value = '';
+  applyTemplate();
+  _id('outreachModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openOutreachForContact(contactId) {
+  const c = contacts.find(x => x.id === contactId);
+  currentOutreachOpp = { agency: c?.agency || '', pocName: c?.name || 'Contracting Officer', pocEmail: c?.email || '', solicitation: '' };
+  _id('outreachModalTitle').textContent = `Outreach: ${c?.name || 'Contact'}`;
+  _id('outreachTo').value = c?.email || '';
+  applyTemplate();
+  _id('outreachModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOutreach() {
+  _id('outreachModal').classList.remove('open');
+  document.body.style.overflow = '';
+  currentOutreachOpp = null;
+}
+
+function closeOutreachIfBg(e) { if (e.target === _id('outreachModal')) closeOutreach(); }
+function openMailClient() {
+  const to = _id('outreachTo').value;
+  const subj = encodeURIComponent(_id('outreachSubject').value);
+  const body = encodeURIComponent(_id('outreachBody').value);
+  window.location.href = `mailto:${to}?subject=${subj}&body=${body}`;
+}
+function openQuickMail() {
+  const to = _id('quickTo').value;
+  const subj = encodeURIComponent(_id('quickSubject').value);
+  const body = encodeURIComponent(_id('quickBody').value);
+  window.location.href = `mailto:${to}?subject=${subj}&body=${body}`;
+}
+function copyEmailBody() {
+  navigator.clipboard?.writeText(_id('outreachBody').value).then(() => notify('Body copied ✓', 'success'));
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// FILTERS & TABS
+// ══════════════════════════════════════════════════════════════════════════
+function setTab(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  _id('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function filterOutreach(f, btn) {
+  outreachFilter = f;
+  document.querySelectorAll('#page-outreach-log .filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOutreach();
+}
+
+function filterAgencies(f, btn) {
+  agencyFilter = f;
+  document.querySelectorAll('#page-agencies .filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAgencies();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════════════════
+function updateStats() {
+  const queue = opps.filter(o => !o.status || o.status === '🔍 Identified').length;
+  const pipeline = opps.filter(o => o.status && o.status !== '🔍 Identified' && o.status !== '❌ Not Pursuing').length;
+  const scores = opps.filter(o => o.score > 0).map(o => o.score);
+  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  const totalVal = opps.reduce((s,o)=>s+(o.value||0), 0);
+  const outreachCount = outreachItems.length;
+  const followups = outreachItems.filter(o => o.status?.includes('Awaiting')).length;
+
+  _id('statQueue').textContent = queue;
+  _id('statPipeline').textContent = pipeline;
+  _id('statScore').textContent = avgScore || '—';
+  _id('statValue').textContent = totalVal > 0 ? `$${Math.round(totalVal/1000)}K` : '—';
+  _id('statOutreach').textContent = outreachCount;
+  _id('statFollowups').textContent = followups;
+  _id('statFollowups').style.color = followups > 0 ? 'var(--red)' : 'var(--lime)';
+  _id('statContacts').textContent = contacts.length;
+
+  const scoreEl = _id('statScore');
+  scoreEl.style.color = avgScore >= 70 ? 'var(--lime)' : avgScore >= 50 ? 'var(--amber)' : 'var(--red)';
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════════════════════════════
+function saveSetup() {
+  const url = _id('setupProxyUrl').value.trim().replace(/\/$/, '');
+  if (!url) { notify('Enter your Cloudflare Worker URL first', 'warn'); return; }
+  localStorage.setItem('govcon_proxy_url', url);
+  _id('setupScreen').classList.remove('active');
+  _id('app').style.display = 'flex';
+  _id('app').style.flexDirection = 'column';
+  notify('Connected! Syncing data…', 'success');
+  loadAllData();
+}
+
+function launchDemo() {
+  _id('setupScreen').classList.remove('active');
+  _id('app').style.display = 'flex';
+  _id('app').style.flexDirection = 'column';
+  opps = DEMO_OPPS; contacts = DEMO_CONTACTS; outreachItems = DEMO_OUTREACH;
+  isDemo = true;
+  notify('Running in demo mode — enter proxy URL in Setup ⚙ to connect Notion', 'info', 5000);
+  updateStats();
+  renderAll();
+}
+
+function showSetup() {
+  _id('setupProxyUrl').value = getProxy();
+  _id('setupScreen').classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════
+const _id = id => document.getElementById(id);
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function notify(msg, type = 'info', duration = 3000) {
+  const el = _id('notif');
+  el.textContent = msg;
+  el.className = `notif notif-${type === 'success' ? 'success' : type === 'warn' ? 'warn' : 'info'}`;
+  el.style.display = 'block';
+  if (el._timer) clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.style.display = 'none', duration);
+}
+
+function setLoading(on) {
+  _id('loadingBar').classList.toggle('active', on);
+  _id('syncBtn').textContent = on ? '⟳' : '↻ Sync';
+  _id('syncBtn').disabled = on;
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOutreach(); });
+
+// ══════════════════════════════════════════════════════════════════════════
+// AGENCY DATA
+// ══════════════════════════════════════════════════════════════════════════
+const AGENCY_DATA = [
+  {abbr:'OPM', name:'Office of Personnel Management', tier:1, spend:'$1.1B+', naics:'611430', sdvosb:'High', type:'Federal', desc:'Historically #1 federal buyer under NAICS 611430 — 29%+ market share. Center for Leadership Development, Federal Executive Institute, SES coaching. Largest single-agency opportunity.', icon:'🏛️', color:'#3B82F6'},
+  {abbr:'VA', name:'Dept. of Veterans Affairs', tier:1, spend:'$900M+', naics:'611430', sdvosb:'Highest', type:'Federal', desc:'Vets First Program gives SDVOSBs first priority — above all other set-aside categories. VHA + VBA both procure leadership coaching. Sole-source awards regularly available for qualified SDVOSBs.', icon:'⭐', color:'#10B981'},
+  {abbr:'DoD', name:'Dept. of Defense', tier:1, spend:'$750M+', naics:'611430', sdvosb:'High', type:'Federal', desc:'Army, Navy, Air Force, OSD, Marine Corps — senior civilian and military coaching. Defense Acquisition University and National Defense University are key buyers. SDVOSB set-asides across components.', icon:'🎖️', color:'#6366F1'},
+  {abbr:'HHS', name:'HHS / NIH / CDC', tier:2, spend:'$400M+', naics:'611430', sdvosb:'Medium', type:'Federal', desc:'NIH, CDC, CMS, HRSA serve 80,000+ employees. Strong buyer for assessment-informed coaching, group cohorts for scientific and public health leaders. Complex org environment.', icon:'🏥', color:'#F59E0B'},
+  {abbr:'DHS', name:'Dept. of Homeland Security', tier:2, spend:'$280M+', naics:'611430', sdvosb:'High', type:'Federal', desc:'FEMA, CBP, TSA, USCIS, ICE each procure leadership coaching for mission-critical roles. DHS values veteran operational background as a differentiator in coaching vendors.', icon:'🛡️', color:'#EF4444'},
+  {abbr:'DOJ', name:'Dept. of Justice', tier:2, spend:'$180M+', naics:'611430', sdvosb:'Medium', type:'Federal', desc:'FBI, DEA, ATF, DOJ National Advocacy Center. Executive development programs for senior law enforcement and prosecutorial leadership. Strong demand for high-pressure leadership coaching.', icon:'⚖️', color:'#8B5CF6'},
+  {abbr:'TRES', name:'Dept. of Treasury', tier:2, spend:'$160M+', naics:'611430', sdvosb:'Medium', type:'Federal', desc:'IRS, FinCEN, Treasury Executive Institute — senior leadership development. Strong buyer for management consulting and assessment services alongside coaching.', icon:'💰', color:'#F59E0B'},
+  {abbr:'USDA', name:'Dept. of Agriculture', tier:3, spend:'$95M+', naics:'611430', sdvosb:'Medium', type:'Federal', desc:'USDA Rural Development, Food Safety, Forest Service — leadership programs for geographically dispersed workforces. Virtual delivery is standard.', icon:'🌾', color:'#10B981'},
+  {abbr:'DOE', name:'Dept. of Energy', tier:3, spend:'$85M+', naics:'611430', sdvosb:'Medium', type:'Federal', desc:'National labs and program offices. Leadership coaching for highly technical leaders transitioning to executive roles. Strong appetite for assessment-informed development.', icon:'⚡', color:'#F97316'},
+  {abbr:'MN', name:'State of Minnesota', tier:2, spend:'$45M+', naics:'611430', sdvosb:'Medium', type:'State', desc:'MNIT, Dept. of Human Services, Dept. of Management & Budget. Local proximity advantage. Minnesota SDVOSB preference programs supplement federal SDVOSB status.', icon:'🌲', color:'#3B82F6'},
+  {abbr:'WI', name:'State of Wisconsin', tier:3, spend:'$32M+', naics:'611430', sdvosb:'Low', type:'State', desc:'DOA, Dept. of Workforce Development, state agency leadership programs. Adjacent market with Midwest regional coaching demand.', icon:'🧀', color:'#F59E0B'},
+  {abbr:'HENN', name:'Hennepin County', tier:3, spend:'$12M+', naics:'611430', sdvosb:'Low', type:'Local', desc:'Largest county in Minnesota. County Administrator\'s office and HR invest in leadership development for senior county leaders. Local proximity and community ties are significant advantages.', icon:'🏙️', color:'#6366F1'},
+];
+
+// ══════════════════════════════════════════════════════════════════════════
+// DEMO DATA
+// ══════════════════════════════════════════════════════════════════════════
+const DEMO_OPPS = [
+  {id:'d1',name:'OPM SES Leadership Coaching Program FY26',status:'🔍 Identified',agency:'OPM',procType:'SDVOSB Set-Aside',value:185000,score:92,deadline:'2026-05-15',sdvosb:'Yes — Set-Aside',priority:'🔴 High',pocName:'Sarah Mitchell',pocEmail:'s.mitchell@opm.gov',solicitation:'OPM-2026-CLD-002',services:['1:1 Executive Coaching','Group Cohort Facilitation'],naics:'611430',psc:'U099'},
+  {id:'d2',name:'VA VHA Senior Leader Coaching — Vets First FY26',status:'🔍 Identified',agency:'VA',procType:'SDVOSB Set-Aside',value:96000,score:94,deadline:'2026-05-22',sdvosb:'Yes — Vets First',priority:'🔴 High',pocName:'Marcus Thompson',pocEmail:'m.thompson@va.gov',solicitation:'VA-2026-LDC-041',services:['Group Cohort Facilitation','Team Coaching'],naics:'611430',psc:'U099'},
+  {id:'d3',name:'NIH Supervisor Assessment & Development Package',status:'🔍 Identified',agency:'NIH',procType:'Micropurchase ≤$15K',value:12500,score:76,deadline:'2026-05-08',sdvosb:'Preference Only',priority:'🟡 Medium',pocName:'Dr. Lisa Chen',pocEmail:'l.chen@nih.gov',solicitation:'',services:['Assessment Services'],naics:'541612',psc:'U008'},
+  {id:'d4',name:'DoD Army Team Effectiveness Workshop Series',status:'🔍 Identified',agency:'DoD — Army',procType:'Simplified Acquisition ≤$350K',value:48000,score:83,deadline:'2026-06-01',sdvosb:'Yes — Set-Aside',priority:'🔴 High',pocName:'',pocEmail:'',solicitation:'DAAA-2026-0412',services:['Team Coaching','Leadership Workshop'],naics:'611430',psc:'R499'},
+  {id:'d5',name:'Minnesota MNIT Executive Leadership Development',status:'🔍 Identified',agency:'MN',procType:'Simplified Acquisition ≤$350K',value:65000,score:64,deadline:'2026-05-30',sdvosb:'Preference Only',priority:'🟡 Medium',pocName:'',pocEmail:'',solicitation:'',services:['Group Cohort Facilitation','Leadership Workshop'],naics:'611430',psc:'U008'},
+  {id:'d6',name:'HHS CDC Leadership Coaching — Senior Scientists',status:'📋 Qualifying',agency:'CDC',procType:'Simplified Acquisition ≤$350K',value:125000,score:79,deadline:'2026-06-15',sdvosb:'Preference Only',priority:'🟡 Medium',pocName:'',pocEmail:'',solicitation:'CDC-2026-HR-011',services:['1:1 Executive Coaching','Assessment Services'],naics:'611430',psc:'U099'},
+  {id:'d7',name:'DHS FEMA Leadership Team Alignment',status:'✉️ Outreach Sent',agency:'FEMA',procType:'Micropurchase ≤$15K',value:14800,score:81,deadline:'2026-04-30',sdvosb:'Yes — Set-Aside',priority:'🔴 High',pocName:'',pocEmail:'',solicitation:'',services:['Team Coaching'],naics:'611430',psc:'R799'},
+];
+
+const DEMO_CONTACTS = [
+  {id:'c1',name:'Sarah Mitchell',role:'Small Business Specialist',agency:'OPM',relStatus:'🌡️ Warming',authority:'Simplified Acquisition',email:'s.mitchell@opm.gov',sdvosbInterest:'High',nextFollowUp:'2026-05-05'},
+  {id:'c2',name:'Marcus Thompson',role:'Contracting Officer (CO)',agency:'VA',relStatus:'🆕 Cold',authority:'Full Contracting Authority',email:'m.thompson@va.gov',sdvosbInterest:'High',nextFollowUp:''},
+  {id:'c3',name:'Dr. Lisa Chen',role:'Program Officer',agency:'NIH',relStatus:'🤝 Connected',authority:'Influencer Only',email:'l.chen@nih.gov',sdvosbInterest:'Medium',nextFollowUp:'2026-04-28'},
+];
+
+const DEMO_OUTREACH = [
+  {id:'o1',subject:'SDVOSB ICF PCC Executive Coaching — Capabilities Introduction, OPM',type:'📧 Email — Cold Intro',status:'📞 Awaiting Response',template:'Cold Intro — CO',date:'2026-04-07',followUpDue:'2026-04-21'},
+  {id:'o2',subject:'SDVOSB Introduction — VA Vets First Leadership Coaching',type:'📧 Email — Cold Intro',status:'✉️ Responded',template:'Cold Intro — Small Biz Specialist',date:'2026-04-03',followUpDue:'2026-04-17'},
+  {id:'o3',subject:'Following up — SDVOSB Coaching Capabilities, FEMA',type:'📧 Email — Follow-Up',status:'🚫 No Response',template:'Follow-Up #1 (14 days)',date:'2026-03-28',followUpDue:'2026-04-11'},
+];
+
+// ══════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════
+(function init() {
+  const proxy = localStorage.getItem('govcon_proxy_url');
+  if (proxy) {
+    _id('app').style.display = 'flex';
+    _id('app').style.flexDirection = 'column';
+    loadAllData();
+  } else {
+    _id('setupScreen').classList.add('active');
+  }
+  // Init quick template
+  setTimeout(() => applyQuickTemplate(), 100);
+})();
+</script>
+</body>
+</html>
